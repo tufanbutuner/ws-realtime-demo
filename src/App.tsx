@@ -1,6 +1,7 @@
 import { useXrpPrice } from '@/hooks/useXrpPrice'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const statusConfig = {
   connecting: { label: 'Connecting', variant: 'secondary' as const },
@@ -21,20 +22,20 @@ function App() {
           <Badge variant={variant}>{label}</Badge>
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold tracking-tight">
-            {price !== null ? (
-              <>
-                <span className="text-muted-foreground text-2xl mr-1">£</span>
-                {price.toFixed(4)}
-              </>
-            ) : (
-              <span className="text-muted-foreground text-2xl">—</span>
-            )}
-          </div>
-          {lastUpdated && (
+          {price !== null ? (
+            <div className="text-4xl font-bold tracking-tight">
+              <span className="text-muted-foreground text-2xl mr-1">£</span>
+              {price.toFixed(4)}
+            </div>
+          ) : (
+            <Skeleton className="h-10 w-36 mt-1" />
+          )}
+          {lastUpdated ? (
             <p className="text-xs text-muted-foreground mt-2">
               Updated {lastUpdated.toLocaleTimeString()}
             </p>
+          ) : (
+            <Skeleton className="h-3 w-24 mt-2" />
           )}
         </CardContent>
       </Card>
