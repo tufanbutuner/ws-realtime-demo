@@ -28,3 +28,7 @@ This project is named `xrp-tracker` in package.json. The current `App.tsx` is bo
 ## ESLint
 
 Uses flat config format (ESLint 9+). Config is in `eslint.config.js`.
+
+## Git
+
+Never add `Co-Authored-By` trailers to commit messages.

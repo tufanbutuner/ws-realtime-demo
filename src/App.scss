@@ -1,0 +1,129 @@
+.tracker {
+  min-height: 100vh;
+  background-color: var(--salt-color-gray-20);
+  padding: 24px;
+
+  &__inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+  }
+}
+
+.price-card {
+  padding: 16px;
+
+  &__label {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--salt-color-gray-200);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__value {
+    margin-bottom: 8px;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+
+    &-currency {
+      font-size: 22px;
+      color: var(--salt-color-gray-200);
+      margin-right: 2px;
+    }
+  }
+
+  &__updated {
+    margin: 0 0 12px;
+    font-size: 11px;
+    color: var(--salt-color-gray-200);
+  }
+
+  &__spinner-row {
+    margin-bottom: 12px;
+  }
+
+  &__stats {
+    border-top: 1px solid var(--salt-separable-primary-borderColor);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+
+  &__label {
+    font-size: 13px;
+    color: var(--salt-color-gray-200);
+  }
+
+  &__value {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.chart-card {
+  padding: 16px;
+
+  &__label {
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--salt-color-gray-200);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__empty {
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--salt-color-gray-200);
+    }
+  }
+}
