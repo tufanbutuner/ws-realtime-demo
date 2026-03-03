@@ -1,13 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { SaltProvider } from '@salt-ds/core'
-import './index.css'
-import App from './App.tsx'
+import { SaltProviderNext } from "@salt-ds/core";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <SaltProvider>
+    <SaltProviderNext accent="teal" corner="rounded">
       <App />
-    </SaltProvider>
+    </SaltProviderNext>
   </StrictMode>,
-)
+);

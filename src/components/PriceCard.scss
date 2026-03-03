@@ -1,0 +1,26 @@
+.price-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--salt-spacing-100);
+
+  &__label {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__value {
+    display: flex;
+    align-items: baseline;
+    gap: var(--salt-spacing-25);
+  }
+
+  &__divider {
+    margin: var(--salt-spacing-100) 0;
+  }
+
+  &__stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--salt-spacing-50);
+  }
+}
