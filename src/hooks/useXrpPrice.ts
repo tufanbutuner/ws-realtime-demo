@@ -2,13 +2,23 @@ import { useEffect, useRef, useState } from 'react'
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error'
 
+export interface PricePoint {
+  time: number
+  price: number
+}
+
 export interface XrpPriceState {
   price: number | null
+  high: number | null
+  low: number | null
+  volume: number | null
   status: ConnectionStatus
   lastUpdated: Date | null
+  history: PricePoint[]
 }
 
 const WS_URL = 'wss://ws.kraken.com/v2'
+const MAX_HISTORY = 100
 
 const SUBSCRIBE_MSG = JSON.stringify({
   method: 'subscribe',
@@ -19,9 +29,15 @@ const SUBSCRIBE_MSG = JSON.stringify({
 })
 
 export function useXrpPrice(): XrpPriceState {
-  const [price, setPrice] = useState<number | null>(null)
-  const [status, setStatus] = useState<ConnectionStatus>('connecting')
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [state, setState] = useState<XrpPriceState>({
+    price: null,
+    high: null,
+    low: null,
+    volume: null,
+    status: 'connecting',
+    lastUpdated: null,
+    history: [],
+  })
   const wsRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
@@ -29,27 +45,36 @@ export function useXrpPrice(): XrpPriceState {
     wsRef.current = ws
 
     ws.onopen = () => {
-      setStatus('connected')
+      setState(s => ({ ...s, status: 'connected' }))
       ws.send(SUBSCRIBE_MSG)
     }
 
     ws.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data as string) as KrakenMessage
-      if (data.channel === 'ticker' && data.type === 'update' && Array.isArray(data.data)) {
+      if (data.channel === 'ticker' && Array.isArray(data.data)) {
         const ticker = data.data[0]
-        if (ticker?.last !== undefined) {
-          setPrice(ticker.last)
-          setLastUpdated(new Date())
-        }
+        if (!ticker) return
+        const now = Date.now()
+        setState(s => ({
+          ...s,
+          price: ticker.last ?? s.price,
+          high: ticker.high ?? s.high,
+          low: ticker.low ?? s.low,
+          volume: ticker.volume ?? s.volume,
+          lastUpdated: new Date(),
+          history: ticker.last !== undefined
+            ? [...s.history, { time: now, price: ticker.last }].slice(-MAX_HISTORY)
+            : s.history,
+        }))
       }
     }
 
     ws.onerror = () => {
-      setStatus('error')
+      setState(s => ({ ...s, status: 'error' }))
     }
 
     ws.onclose = () => {
-      setStatus('disconnected')
+      setState(s => ({ ...s, status: 'disconnected' }))
     }
 
     return () => {
@@ -57,11 +82,14 @@ export function useXrpPrice(): XrpPriceState {
     }
   }, [])
 
-  return { price, status, lastUpdated }
+  return state
 }
 
 interface KrakenTickerData {
-  last: number
+  last?: number
+  high?: number
+  low?: number
+  volume?: number
   [key: string]: unknown
 }
 
