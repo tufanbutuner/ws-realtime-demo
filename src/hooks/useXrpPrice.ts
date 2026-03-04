@@ -12,6 +12,8 @@ export interface XrpPriceState {
   high: number | null
   low: number | null
   volume: number | null
+  trades: number | null
+  updatesPerMin: number
   status: ConnectionStatus
   lastUpdated: Date | null
   history: PricePoint[]
@@ -34,11 +36,14 @@ export function useXrpPrice(): XrpPriceState {
     high: null,
     low: null,
     volume: null,
+    trades: null,
+    updatesPerMin: 0,
     status: 'connecting',
     lastUpdated: null,
     history: [],
   })
   const wsRef = useRef<WebSocket | null>(null)
+  const updateTimestamps = useRef<number[]>([])
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL)
@@ -55,12 +60,19 @@ export function useXrpPrice(): XrpPriceState {
         const ticker = data.data[0]
         if (!ticker) return
         const now = Date.now()
+
+        // Track update timestamps for updates/min calculation
+        updateTimestamps.current = [...updateTimestamps.current, now].filter(t => now - t < 60_000)
+        const updatesPerMin = updateTimestamps.current.length
+
         setState(s => ({
           ...s,
           price: ticker.last ?? s.price,
           high: ticker.high ?? s.high,
           low: ticker.low ?? s.low,
           volume: ticker.volume ?? s.volume,
+          trades: ticker.trades ?? s.trades,
+          updatesPerMin,
           lastUpdated: new Date(),
           history: ticker.last !== undefined
             ? [...s.history, { time: now, price: ticker.last }].slice(-MAX_HISTORY)
@@ -90,6 +102,7 @@ interface KrakenTickerData {
   high?: number
   low?: number
   volume?: number
+  trades?: number
   [key: string]: unknown
 }
 

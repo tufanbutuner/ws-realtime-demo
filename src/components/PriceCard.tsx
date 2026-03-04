@@ -7,10 +7,12 @@ interface PriceCardProps {
   high: number | null;
   low: number | null;
   volume: number | null;
+  trades: number | null;
+  updatesPerMin: number;
   lastUpdated: Date | null;
 }
 
-export function PriceCard({ price, high, low, volume, lastUpdated }: PriceCardProps) {
+export function PriceCard({ price, high, low, volume, trades, updatesPerMin, lastUpdated }: PriceCardProps) {
   return (
     <Card variant="primary" accent="top" className="price-card">
       <Text styleAs="label" color="secondary" className="price-card__label">
@@ -40,6 +42,16 @@ export function PriceCard({ price, high, low, volume, lastUpdated }: PriceCardPr
         <StatRow
           label="24h Volume"
           value={volume !== null ? volume.toLocaleString(undefined, { maximumFractionDigits: 0 }) : null}
+        />
+        <StatRow
+          label="24h Trades"
+          value={trades !== null ? trades.toLocaleString() : null}
+          prefix=""
+        />
+        <StatRow
+          label="Updates/min"
+          value={String(updatesPerMin)}
+          prefix=""
         />
       </div>
     </Card>

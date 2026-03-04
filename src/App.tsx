@@ -6,7 +6,7 @@ import { useXrpPrice } from "@/hooks/useXrpPrice";
 import "./App.scss";
 
 function App() {
-  const { price, high, low, volume, status, lastUpdated, history } = useXrpPrice();
+  const { price, high, low, volume, trades, updatesPerMin, status, lastUpdated, history } = useXrpPrice();
 
   return (
     <div className="tracker">
@@ -16,7 +16,7 @@ function App() {
           <StatusBadge status={status} />
         </div>
         <div className="tracker__grid">
-          <PriceCard price={price} high={high} low={low} volume={volume} lastUpdated={lastUpdated} />
+          <PriceCard price={price} high={high} low={low} volume={volume} trades={trades} updatesPerMin={updatesPerMin} lastUpdated={lastUpdated} />
           <PriceChart history={history} />
         </div>
       </div>
