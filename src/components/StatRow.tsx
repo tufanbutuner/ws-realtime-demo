@@ -7,7 +7,7 @@ interface StatRowProps {
   prefix?: string;
 }
 
-export function StatRow({ label, value, prefix = '£' }: StatRowProps) {
+export function StatRow({ label, value, prefix = '$' }: StatRowProps) {
   return (
     <div className="stat-row">
       <Text styleAs="label" color="secondary">{label}</Text>

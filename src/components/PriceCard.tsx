@@ -10,9 +10,10 @@ interface PriceCardProps {
   trades: number | null;
   updatesPerMin: number;
   lastUpdated: Date | null;
+  currencySymbol?: string;
 }
 
-export function PriceCard({ price, high, low, volume, trades, updatesPerMin, lastUpdated }: PriceCardProps) {
+export function PriceCard({ price, high, low, volume, trades, updatesPerMin, lastUpdated, currencySymbol = '$' }: PriceCardProps) {
   return (
     <Card variant="primary" accent="top" className="price-card">
       <Text styleAs="label" color="secondary" className="price-card__label">
@@ -21,7 +22,7 @@ export function PriceCard({ price, high, low, volume, trades, updatesPerMin, las
       <div className="price-card__value">
         {price !== null ? (
           <>
-            <Text as="span" styleAs="h3" color="secondary">£</Text>
+            <Text as="span" styleAs="h3" color="secondary">{currencySymbol}</Text>
             <Text as="span" styleAs="h1">{price.toFixed(4)}</Text>
           </>
         ) : (
@@ -37,8 +38,8 @@ export function PriceCard({ price, high, low, volume, trades, updatesPerMin, las
       )}
       <Divider className="price-card__divider" />
       <div className="price-card__stats">
-        <StatRow label="24h High" value={high?.toFixed(4) ?? null} />
-        <StatRow label="24h Low" value={low?.toFixed(4) ?? null} />
+        <StatRow label="24h High" value={high?.toFixed(4) ?? null} prefix={currencySymbol} />
+        <StatRow label="24h Low" value={low?.toFixed(4) ?? null} prefix={currencySymbol} />
         <StatRow
           label="24h Volume"
           value={volume !== null ? volume.toLocaleString(undefined, { maximumFractionDigits: 0 }) : null}

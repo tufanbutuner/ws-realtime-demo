@@ -1,6 +1,6 @@
 import { StatusIndicator, Text } from "@salt-ds/core";
 import { statusConfig } from "@/config/statusConfig";
-import type { ConnectionStatus } from "@/hooks/useXrpPrice";
+import type { ConnectionStatus } from "@/hooks/useTicker";
 import "./StatusBadge.scss";
 
 interface StatusBadgeProps {

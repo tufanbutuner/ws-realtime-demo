@@ -7,7 +7,7 @@ export interface PricePoint {
   price: number
 }
 
-export interface XrpPriceState {
+export interface TickerState {
   price: number | null
   high: number | null
   low: number | null
@@ -22,16 +22,8 @@ export interface XrpPriceState {
 const WS_URL = 'wss://ws.kraken.com/v2'
 const MAX_HISTORY = 100
 
-const SUBSCRIBE_MSG = JSON.stringify({
-  method: 'subscribe',
-  params: {
-    channel: 'ticker',
-    symbol: ['XRP/GBP'],
-  },
-})
-
-export function useXrpPrice(): XrpPriceState {
-  const [state, setState] = useState<XrpPriceState>({
+export function useTicker(symbol: string): TickerState {
+  const [state, setState] = useState<TickerState>({
     price: null,
     high: null,
     low: null,
@@ -42,16 +34,17 @@ export function useXrpPrice(): XrpPriceState {
     lastUpdated: null,
     history: [],
   })
-  const wsRef = useRef<WebSocket | null>(null)
   const updateTimestamps = useRef<number[]>([])
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL)
-    wsRef.current = ws
 
     ws.onopen = () => {
       setState(s => ({ ...s, status: 'connected' }))
-      ws.send(SUBSCRIBE_MSG)
+      ws.send(JSON.stringify({
+        method: 'subscribe',
+        params: { channel: 'ticker', symbol: [symbol] },
+      }))
     }
 
     ws.onmessage = (event: MessageEvent) => {
@@ -61,7 +54,6 @@ export function useXrpPrice(): XrpPriceState {
         if (!ticker) return
         const now = Date.now()
 
-        // Track update timestamps for updates/min calculation
         updateTimestamps.current = [...updateTimestamps.current, now].filter(t => now - t < 60_000)
         const updatesPerMin = updateTimestamps.current.length
 
@@ -81,18 +73,11 @@ export function useXrpPrice(): XrpPriceState {
       }
     }
 
-    ws.onerror = () => {
-      setState(s => ({ ...s, status: 'error' }))
-    }
+    ws.onerror = () => setState(s => ({ ...s, status: 'error' }))
+    ws.onclose = () => setState(s => ({ ...s, status: 'disconnected' }))
 
-    ws.onclose = () => {
-      setState(s => ({ ...s, status: 'disconnected' }))
-    }
-
-    return () => {
-      ws.close()
-    }
-  }, [])
+    return () => { ws.close() }
+  }, [symbol])
 
   return state
 }

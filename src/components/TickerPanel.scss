@@ -1,0 +1,21 @@
+.ticker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--salt-spacing-200);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--salt-spacing-300);
+  }
+}

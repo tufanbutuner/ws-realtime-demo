@@ -7,14 +7,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { PricePoint } from "@/hooks/useXrpPrice";
+import type { PricePoint } from "@/hooks/useTicker";
 import "./PriceChart.scss";
 
 interface PriceChartProps {
   history: PricePoint[];
+  currencySymbol?: string;
 }
 
-export function PriceChart({ history }: PriceChartProps) {
+export function PriceChart({ history, currencySymbol = '$' }: PriceChartProps) {
   const chartData = history.map((p) => ({
     time: new Date(p.time).toLocaleTimeString(),
     price: p.price,
@@ -44,14 +45,14 @@ export function PriceChart({ history }: PriceChartProps) {
             <XAxis dataKey="time" hide />
             <YAxis
               domain={domain}
-              tickFormatter={(v: number) => `£${v.toFixed(4)}`}
+              tickFormatter={(v: number) => `${currencySymbol}${v.toFixed(4)}`}
               width={72}
               tick={{ fontSize: 11 }}
               tickLine={false}
               axisLine={false}
             />
             <Tooltip
-              formatter={(v: number | undefined) => v !== undefined ? [`£${v.toFixed(4)}`, "Price"] : ["-", "Price"]}
+              formatter={(v: number | undefined) => v !== undefined ? [`${currencySymbol}${v.toFixed(4)}`, "Price"] : ["-", "Price"]}
               labelFormatter={(l: unknown) => `Time: ${String(l)}`}
               contentStyle={{ fontSize: 12 }}
             />
