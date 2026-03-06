@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--salt-spacing-200);
+  background: var(--salt-color-white);
+  border: 1px solid var(--salt-color-gray-100);
+  border-radius: var(--salt-spacing-100);
+  padding: var(--salt-spacing-300);
 
   &__header {
     display: flex;
@@ -15,7 +19,7 @@
   }
 
   &__grid {
-    height: 360px;
+    height: 400px;
     width: 100%;
   }
 }

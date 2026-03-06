@@ -1,6 +1,5 @@
 .stat-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--salt-spacing-25) 0;
+  flex-direction: column;
+  gap: var(--salt-spacing-25);
 }

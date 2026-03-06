@@ -19,8 +19,8 @@
   }
 
   &__stats {
-    display: flex;
-    flex-direction: column;
-    gap: var(--salt-spacing-50);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--salt-spacing-200);
   }
 }
