@@ -1,0 +1,37 @@
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--salt-color-gray-900);
+  border-right: 1px solid var(--salt-color-gray-700);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--salt-spacing-200) var(--salt-spacing-100);
+  gap: var(--salt-spacing-200);
+
+  &__title {
+    padding: var(--salt-spacing-100) var(--salt-spacing-100) var(--salt-spacing-200);
+    border-bottom: 1px solid var(--salt-color-gray-700);
+  }
+
+  &__heading {
+    color: var(--salt-color-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__region {
+    color: var(--salt-color-gray-400) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 10px;
+    padding: var(--salt-spacing-100) var(--salt-spacing-200) var(--salt-spacing-50);
+  }
+}
