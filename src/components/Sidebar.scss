@@ -25,6 +25,12 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+
+    &--crypto {
+      margin-top: auto;
+      padding-top: var(--salt-spacing-200);
+      border-top: 1px solid var(--salt-color-gray-700);
+    }
   }
 
   &__region {

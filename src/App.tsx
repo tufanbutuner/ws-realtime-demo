@@ -21,12 +21,11 @@ function App() {
         <Sidebar activeSymbol={activeSymbol} onSelect={setActiveSymbol} />
         <main className="dashboard__body">
           <div className="dashboard__tickers">
-            <TickerPanel symbol="XRP/USD" label="XRP / USD" />
-            <TickerPanel symbol="BTC/USD" label="BTC / USD" />
-            <ForexTickerPanel
-              symbol={activeMarket.symbol}
-              label={activeMarket.label}
-            />
+            {activeMarket.type === "crypto" ? (
+              <TickerPanel symbol={activeMarket.symbol} label={activeMarket.label} />
+            ) : (
+              <ForexTickerPanel symbol={activeMarket.symbol} label={activeMarket.label} />
+            )}
           </div>
           <div className="dashboard__blotter">
             <TradeBlotter symbol="ADA/USD" label="ADA / USD" />
