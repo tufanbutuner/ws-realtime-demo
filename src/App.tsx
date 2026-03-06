@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { ForexTickerPanel } from "@/components/ForexTickerPanel";
 import { Sidebar } from "@/components/Sidebar";
 import { TickerPanel } from "@/components/TickerPanel";
 import { TradeBlotter } from "@/components/TradeBlotter";
 import { EMERGING_MARKETS } from "@/config/markets";
 import "./App.scss";
 
-const DEFAULT_MARKET = EMERGING_MARKETS[0]; // SOL/USD
+const DEFAULT_MARKET = EMERGING_MARKETS[0]; // USD/BRL
 
 function App() {
   const [activeSymbol, setActiveSymbol] = useState(DEFAULT_MARKET.symbol);
@@ -22,9 +23,9 @@ function App() {
           <div className="dashboard__tickers">
             <TickerPanel symbol="XRP/USD" label="XRP / USD" />
             <TickerPanel symbol="BTC/USD" label="BTC / USD" />
-            <TickerPanel
+            <ForexTickerPanel
               symbol={activeMarket.symbol}
-              label={`${activeMarket.label} / USD`}
+              label={activeMarket.label}
             />
           </div>
           <div className="dashboard__blotter">
