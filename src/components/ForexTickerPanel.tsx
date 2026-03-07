@@ -43,7 +43,7 @@ export function ForexTickerPanel({ symbol, label }: ForexTickerPanelProps) {
           ) : (
             <Text styleAs="notation" color="secondary">
               {apiKeyMissing
-                ? "Set VITE_FINNHUB_API_KEY in .env.local"
+                ? "Set VITE_POLYGON_API_KEY in .env.local"
                 : "Waiting for data…"}
             </Text>
           )}
