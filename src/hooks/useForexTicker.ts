@@ -40,21 +40,19 @@ export function useForexTicker(symbol: string): ForexTickerState {
     async function poll() {
       try {
         const res = await fetch(
-          `https://api.polygon.io/v1/lastquote/currencies/${ticker.replace('C:', '').slice(0, 3)}/${ticker.replace('C:', '').slice(3)}?apiKey=${API_KEY}`
+          `https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${API_KEY}`
         )
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json() as PolygonLastQuoteResponse
-        const ask = data.last?.ask
-        const bid = data.last?.bid
-        if (ask == null || bid == null) throw new Error('No quote data')
-        const mid = (ask + bid) / 2
+        const data = await res.json() as PolygonAggsResponse
+        const close = data.results?.[0]?.c
+        if (close == null) throw new Error('No price data')
         const now = Date.now()
         setState(s => ({
           ...s,
           status: 'connected',
-          price: mid,
+          price: close,
           lastUpdated: new Date(),
-          history: [...s.history, { time: now, price: mid }].slice(-MAX_HISTORY),
+          history: [...s.history, { time: now, price: close }].slice(-MAX_HISTORY),
         }))
       } catch {
         setState(s => ({ ...s, status: 'error' }))
@@ -72,9 +70,6 @@ export function useForexTicker(symbol: string): ForexTickerState {
   return state
 }
 
-interface PolygonLastQuoteResponse {
-  last?: {
-    ask: number
-    bid: number
-  }
+interface PolygonAggsResponse {
+  results?: { c: number }[]
 }
