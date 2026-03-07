@@ -12,6 +12,7 @@ const DEFAULT_MARKET = EMERGING_MARKETS[0]; // USD/BRL
 
 function App() {
   const [activeSymbol, setActiveSymbol] = useState(DEFAULT_MARKET.symbol);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const activeMarket = EMERGING_MARKETS.find((m) => m.symbol === activeSymbol) ?? DEFAULT_MARKET;
   const forexTicker = useForexTicker(activeMarket.type === "forex" ? activeMarket.symbol : "");
@@ -20,7 +21,7 @@ function App() {
     <div className="dashboard">
       <DashboardHeader />
       <div className="dashboard__content">
-        <Sidebar activeSymbol={activeSymbol} onSelect={setActiveSymbol} activeForexPrice={forexTicker.price} />
+        <Sidebar activeSymbol={activeSymbol} onSelect={setActiveSymbol} activeForexPrice={forexTicker.price} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((c) => !c)} />
         <main className="dashboard__body">
           <div className="dashboard__tickers">
             {activeMarket.type === "crypto" ? (

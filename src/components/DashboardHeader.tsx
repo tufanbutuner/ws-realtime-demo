@@ -14,7 +14,7 @@ export function DashboardHeader() {
     <header className="dash-header">
       <div className="dash-header__brand">
         <span className="dash-header__dot" />
-        <Text styleAs="h3" as="span">Crypto Market Dashboard</Text>
+        <Text styleAs="h3" as="span">EM Monitor</Text>
       </div>
       <div className="dash-header__meta">
         <Text styleAs="label" className="dash-header__meta-text">LIVE</Text>

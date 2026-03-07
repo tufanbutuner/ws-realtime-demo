@@ -40,4 +40,40 @@
     font-size: 10px;
     padding: var(--salt-spacing-100) var(--salt-spacing-200) var(--salt-spacing-50);
   }
+
+  &__toggle {
+    background: none;
+    border: none;
+    color: var(--salt-color-gray-400);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 var(--salt-spacing-50);
+    margin-left: auto;
+
+    &:hover {
+      color: var(--salt-color-white);
+    }
+  }
+
+  &--collapsed {
+    width: 40px;
+    padding: var(--salt-spacing-200) var(--salt-spacing-50);
+    align-items: center;
+
+    .sidebar__title {
+      padding: var(--salt-spacing-100) 0 var(--salt-spacing-200);
+      border-bottom: 1px solid var(--salt-color-gray-700);
+      justify-content: center;
+    }
+
+    .sidebar__toggle {
+      margin-left: 0;
+    }
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+  }
 }
