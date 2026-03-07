@@ -46,12 +46,12 @@ export function useForexTicker(symbol: string): ForexTickerState {
     ws.onmessage = (event: MessageEvent) => {
       const messages = JSON.parse(event.data as string) as PolygonMessage[]
       for (const msg of messages) {
-        if (msg.ev === 'connected') {
+        if (msg.ev === 'status' && msg.status === 'connected') {
           ws.send(JSON.stringify({ action: 'auth', params: API_KEY }))
-        } else if (msg.ev === 'auth_success') {
+        } else if (msg.ev === 'status' && msg.status === 'auth_success') {
           setState(s => ({ ...s, status: 'connected' }))
           ws.send(JSON.stringify({ action: 'subscribe', params: ticker }))
-        } else if (msg.ev === 'auth_failed') {
+        } else if (msg.ev === 'status' && msg.status === 'auth_failed') {
           setState(s => ({ ...s, status: 'error' }))
         } else if (msg.ev === 'C' && msg.p != null) {
           // Forex quote: p = ask price, b = bid price — use mid
@@ -83,6 +83,7 @@ export function useForexTicker(symbol: string): ForexTickerState {
 
 interface PolygonMessage {
   ev?: string
+  status?: string  // for ev="status" messages
   // Forex quote fields
   p?: number  // ask price
   b?: number  // bid price
