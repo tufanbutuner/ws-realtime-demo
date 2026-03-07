@@ -10,7 +10,6 @@ export interface ForexTickerState {
 
 const MAX_HISTORY = 100
 const POLL_INTERVAL = 60_000 // ms — free plan: 5 req/min
-const API_KEY = import.meta.env.VITE_POLYGON_API_KEY as string | undefined
 
 /**
  * Converts an OANDA symbol like "OANDA:USD_BRL" to a Polygon forex ticker "C:USDBRL"
@@ -32,20 +31,13 @@ export function useForexTicker(symbol: string): ForexTickerState {
   useEffect(() => {
     if (!symbol) return
 
-    if (!API_KEY || API_KEY === 'your_api_key_here') {
-      setState(s => ({ ...s, status: 'error' }))
-      return
-    }
-
     setState({ price: null, status: 'connecting', lastUpdated: null, history: [] })
 
     const ticker = toPolygonTicker(symbol)
 
     async function poll() {
       try {
-        const res = await fetch(
-          `https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${API_KEY}`
-        )
+        const res = await fetch(`/api/polygon/v2/aggs/ticker/${ticker}/prev`)
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json() as PolygonAggsResponse
         const close = data.results?.[0]?.c

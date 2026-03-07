@@ -10,4 +10,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api/polygon': {
+        target: 'https://api.polygon.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/polygon/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            const apiKey = process.env.VITE_POLYGON_API_KEY
+            if (apiKey) {
+              const url = proxyReq.path
+              proxyReq.path = url + (url.includes('?') ? '&' : '?') + `apiKey=${apiKey}`
+            }
+          })
+        },
+      },
+    },
+  },
 })
