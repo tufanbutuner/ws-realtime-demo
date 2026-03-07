@@ -9,15 +9,15 @@ export interface ForexTickerState {
 }
 
 const MAX_HISTORY = 100
+const POLL_INTERVAL = 30_000 // ms
 const API_KEY = import.meta.env.VITE_POLYGON_API_KEY as string | undefined
 
 /**
- * Converts an OANDA symbol like "OANDA:USD_BRL" to a Polygon forex ticker "C.USDBRL"
+ * Converts an OANDA symbol like "OANDA:USD_BRL" to a Polygon forex ticker "C:USDBRL"
  */
 function toPolygonTicker(symbol: string): string {
-  // "OANDA:USD_BRL" → ["USD", "BRL"] → "C.USDBRL"
   const pair = symbol.includes(':') ? symbol.split(':')[1] : symbol
-  return 'C.' + pair.replace('_', '')
+  return 'C:' + pair.replace('_', '')
 }
 
 export function useForexTicker(symbol: string): ForexTickerState {
@@ -27,7 +27,7 @@ export function useForexTicker(symbol: string): ForexTickerState {
     lastUpdated: null,
     history: [],
   })
-  const wsRef = useRef<WebSocket | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (!API_KEY || API_KEY === 'your_api_key_here') {
@@ -36,57 +36,45 @@ export function useForexTicker(symbol: string): ForexTickerState {
     }
 
     const ticker = toPolygonTicker(symbol)
-    const ws = new WebSocket('wss://socket.polygon.io/forex')
-    wsRef.current = ws
 
-    ws.onopen = () => {
-      // Polygon requires auth before subscribe
-    }
-
-    ws.onmessage = (event: MessageEvent) => {
-      const messages = JSON.parse(event.data as string) as PolygonMessage[]
-      for (const msg of messages) {
-        if (msg.ev === 'status' && msg.status === 'connected') {
-          ws.send(JSON.stringify({ action: 'auth', params: API_KEY }))
-        } else if (msg.ev === 'status' && msg.status === 'auth_success') {
-          setState(s => ({ ...s, status: 'connected' }))
-          ws.send(JSON.stringify({ action: 'subscribe', params: ticker }))
-        } else if (msg.ev === 'status' && msg.status === 'auth_failed') {
-          setState(s => ({ ...s, status: 'error' }))
-        } else if (msg.ev === 'C' && msg.p != null) {
-          // Forex quote: p = ask price, b = bid price — use mid
-          const bid = msg.b ?? msg.p
-          const ask = msg.p
-          const mid = (bid + ask) / 2
-          const now = Date.now()
-          setState(s => ({
-            ...s,
-            price: mid,
-            lastUpdated: new Date(),
-            history: [...s.history, { time: now, price: mid }].slice(-MAX_HISTORY),
-          }))
-        }
+    async function poll() {
+      try {
+        const res = await fetch(
+          `https://api.polygon.io/v1/lastquote/currencies/${ticker.replace('C:', '').slice(0, 3)}/${ticker.replace('C:', '').slice(3)}?apiKey=${API_KEY}`
+        )
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json() as PolygonLastQuoteResponse
+        const ask = data.last?.ask
+        const bid = data.last?.bid
+        if (ask == null || bid == null) throw new Error('No quote data')
+        const mid = (ask + bid) / 2
+        const now = Date.now()
+        setState(s => ({
+          ...s,
+          status: 'connected',
+          price: mid,
+          lastUpdated: new Date(),
+          history: [...s.history, { time: now, price: mid }].slice(-MAX_HISTORY),
+        }))
+      } catch {
+        setState(s => ({ ...s, status: 'error' }))
       }
     }
 
-    ws.onerror = () => setState(s => ({ ...s, status: 'error' }))
-    ws.onclose = () => setState(s => ({ ...s, status: 'disconnected' }))
+    poll()
+    timerRef.current = setInterval(poll, POLL_INTERVAL)
 
     return () => {
-      ws.close()
-      wsRef.current = null
+      if (timerRef.current) clearInterval(timerRef.current)
     }
   }, [symbol])
 
   return state
 }
 
-interface PolygonMessage {
-  ev?: string
-  status?: string  // for ev="status" messages
-  // Forex quote fields
-  p?: number  // ask price
-  b?: number  // bid price
-  s?: string  // symbol
-  t?: number  // timestamp
+interface PolygonLastQuoteResponse {
+  last?: {
+    ask: number
+    bid: number
+  }
 }
