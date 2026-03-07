@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ConnectionStatus, PricePoint } from './useTicker'
+import type { ConnectionStatus } from './useTicker'
 
 export interface ForexTickerState {
   price: number | null
   status: ConnectionStatus
   lastUpdated: Date | null
-  history: PricePoint[]
 }
 
-const MAX_HISTORY = 100
 const POLL_INTERVAL = 60_000 // ms — free plan: 5 req/min
 
 /**
@@ -24,14 +22,13 @@ export function useForexTicker(symbol: string): ForexTickerState {
     price: null,
     status: 'connecting',
     lastUpdated: null,
-    history: [],
   })
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (!symbol) return
 
-    setState({ price: null, status: 'connecting', lastUpdated: null, history: [] })
+    setState({ price: null, status: 'connecting', lastUpdated: null })
 
     const ticker = toPolygonTicker(symbol)
 
@@ -42,13 +39,11 @@ export function useForexTicker(symbol: string): ForexTickerState {
         const data = await res.json() as PolygonAggsResponse
         const close = data.results?.[0]?.c
         if (close == null) throw new Error('No price data')
-        const now = Date.now()
         setState(s => ({
           ...s,
           status: 'connected',
           price: close,
           lastUpdated: new Date(),
-          history: [...s.history, { time: now, price: close }].slice(-MAX_HISTORY),
         }))
       } catch {
         setState(s => ({ ...s, status: 'error' }))

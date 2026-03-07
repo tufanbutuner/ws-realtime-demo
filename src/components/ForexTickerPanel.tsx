@@ -1,6 +1,5 @@
 import { Text } from "@salt-ds/core";
 import type { ForexTickerState } from "@/hooks/useForexTicker";
-import { PriceChart } from "./PriceChart";
 import { StatusBadge } from "./StatusBadge";
 import { Card, Divider, Spinner } from "@salt-ds/core";
 import "./TickerPanel.scss";
@@ -12,7 +11,7 @@ interface ForexTickerPanelProps {
 }
 
 export function ForexTickerPanel({ label, ticker }: ForexTickerPanelProps) {
-  const { price, status, lastUpdated, history } = ticker;
+  const { price, status, lastUpdated } = ticker;
 
   const apiKeyMissing = status === "error" && price === null;
 
@@ -49,10 +48,9 @@ export function ForexTickerPanel({ label, ticker }: ForexTickerPanelProps) {
           )}
           <Divider className="price-card__divider" />
           <Text styleAs="notation" color="secondary" className="forex-panel__note">
-            USD per 1 unit of base currency
+            Previous day's close · USD per 1 unit of base currency
           </Text>
         </Card>
-        <PriceChart history={history} currencySymbol="" />
       </div>
     </div>
   );
