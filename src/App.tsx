@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { TickerPanel } from "@/components/TickerPanel";
 import { TradeBlotter } from "@/components/TradeBlotter";
 import { EMERGING_MARKETS } from "@/config/markets";
+import { useForexTicker } from "@/hooks/useForexTicker";
 import "./App.scss";
 
 const DEFAULT_MARKET = EMERGING_MARKETS[0]; // USD/BRL
@@ -13,23 +14,26 @@ function App() {
   const [activeSymbol, setActiveSymbol] = useState(DEFAULT_MARKET.symbol);
 
   const activeMarket = EMERGING_MARKETS.find((m) => m.symbol === activeSymbol) ?? DEFAULT_MARKET;
+  const forexTicker = useForexTicker(activeMarket.type === "forex" ? activeMarket.symbol : "");
 
   return (
     <div className="dashboard">
       <DashboardHeader />
       <div className="dashboard__content">
-        <Sidebar activeSymbol={activeSymbol} onSelect={setActiveSymbol} />
+        <Sidebar activeSymbol={activeSymbol} onSelect={setActiveSymbol} activeForexPrice={forexTicker.price} />
         <main className="dashboard__body">
           <div className="dashboard__tickers">
             {activeMarket.type === "crypto" ? (
               <TickerPanel symbol={activeMarket.symbol} label={activeMarket.label} />
             ) : (
-              <ForexTickerPanel symbol={activeMarket.symbol} label={activeMarket.label} />
+              <ForexTickerPanel label={activeMarket.label} ticker={forexTicker} />
             )}
           </div>
-          <div className="dashboard__blotter">
-            <TradeBlotter symbol="ADA/USD" label="ADA / USD" />
-          </div>
+          {activeMarket.type === "crypto" && (
+            <div className="dashboard__blotter">
+              <TradeBlotter symbol={activeMarket.symbol} label={activeMarket.label} />
+            </div>
+          )}
         </main>
       </div>
     </div>

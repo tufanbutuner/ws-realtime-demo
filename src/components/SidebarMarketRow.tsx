@@ -1,5 +1,4 @@
 import { Text } from "@salt-ds/core";
-import { useForexTicker } from "@/hooks/useForexTicker";
 import type { Market } from "@/config/markets";
 import "./SidebarMarketRow.scss";
 
@@ -7,6 +6,7 @@ interface SidebarMarketRowProps {
   market: Market;
   active: boolean;
   onClick: () => void;
+  price?: number | null;
 }
 
 function formatRate(price: number): string {
@@ -15,9 +15,7 @@ function formatRate(price: number): string {
   return price.toFixed(4);
 }
 
-export function SidebarMarketRow({ market, active, onClick }: SidebarMarketRowProps) {
-  const { price, status } = useForexTicker(market.symbol);
-
+export function SidebarMarketRow({ market, active, onClick, price }: SidebarMarketRowProps) {
   return (
     <button
       className={`sidebar-row${active ? " sidebar-row--active" : ""}`}
@@ -29,14 +27,12 @@ export function SidebarMarketRow({ market, active, onClick }: SidebarMarketRowPr
         <Text styleAs="notation" className="sidebar-row__name">{market.name}</Text>
       </div>
       <div className="sidebar-row__right">
-        {price !== null ? (
+        {price != null ? (
           <Text styleAs="label" className="sidebar-row__price">
             {formatRate(price)}
           </Text>
         ) : (
-          <Text styleAs="notation" className="sidebar-row__loading">
-            {status === "error" ? "n/a" : "…"}
-          </Text>
+          <Text styleAs="notation" className="sidebar-row__loading">—</Text>
         )}
       </div>
     </button>

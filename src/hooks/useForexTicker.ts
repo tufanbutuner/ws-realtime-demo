@@ -9,7 +9,7 @@ export interface ForexTickerState {
 }
 
 const MAX_HISTORY = 100
-const POLL_INTERVAL = 30_000 // ms
+const POLL_INTERVAL = 60_000 // ms — free plan: 5 req/min
 const API_KEY = import.meta.env.VITE_POLYGON_API_KEY as string | undefined
 
 /**
@@ -30,10 +30,14 @@ export function useForexTicker(symbol: string): ForexTickerState {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
+    if (!symbol) return
+
     if (!API_KEY || API_KEY === 'your_api_key_here') {
       setState(s => ({ ...s, status: 'error' }))
       return
     }
+
+    setState({ price: null, status: 'connecting', lastUpdated: null, history: [] })
 
     const ticker = toPolygonTicker(symbol)
 

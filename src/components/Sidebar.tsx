@@ -7,11 +7,12 @@ import "./Sidebar.scss";
 interface SidebarProps {
   activeSymbol: string;
   onSelect: (symbol: string) => void;
+  activeForexPrice?: number | null;
 }
 
 const FOREX_REGIONS = ["Latin America", "Asia", "EMEA"];
 
-export function Sidebar({ activeSymbol, onSelect }: SidebarProps) {
+export function Sidebar({ activeSymbol, onSelect, activeForexPrice }: SidebarProps) {
   const cryptoMarkets = EMERGING_MARKETS.filter((m) => m.type === "crypto");
 
   return (
@@ -29,6 +30,7 @@ export function Sidebar({ activeSymbol, onSelect }: SidebarProps) {
               market={market}
               active={activeSymbol === market.symbol}
               onClick={() => onSelect(market.symbol)}
+              price={activeSymbol === market.symbol ? activeForexPrice : null}
             />
           ))}
         </div>

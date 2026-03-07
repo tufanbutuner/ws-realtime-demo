@@ -1,5 +1,5 @@
 import { Text } from "@salt-ds/core";
-import { useForexTicker } from "@/hooks/useForexTicker";
+import type { ForexTickerState } from "@/hooks/useForexTicker";
 import { PriceChart } from "./PriceChart";
 import { StatusBadge } from "./StatusBadge";
 import { Card, Divider, Spinner } from "@salt-ds/core";
@@ -7,12 +7,12 @@ import "./TickerPanel.scss";
 import "./ForexTickerPanel.scss";
 
 interface ForexTickerPanelProps {
-  symbol: string;
   label: string;
+  ticker: ForexTickerState;
 }
 
-export function ForexTickerPanel({ symbol, label }: ForexTickerPanelProps) {
-  const { price, status, lastUpdated, history } = useForexTicker(symbol);
+export function ForexTickerPanel({ label, ticker }: ForexTickerPanelProps) {
+  const { price, status, lastUpdated, history } = ticker;
 
   const apiKeyMissing = status === "error" && price === null;
 
